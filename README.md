@@ -1,3 +1,17 @@
+# Memory
+
+### Date: 2025-01-08
+
+**Nomad Coders - FullstackGPT #5.0~ 5.8**
+
+## ⚒️ Task
+1. [x] Implement an LCEL chain with memory
+   - ConversationSummaryBufferMemory
+2. [x] the chain should take the title of a movie and reply with emojis
+3. [x] Provide examples to the chain using FewShotChatMessagePromptTemplate
+4. [x] Check if the memory is working by asking what you asked first
+
+---
 # Model I/O
 
 ### Date: 2025-01-07
@@ -10,7 +24,7 @@
    - set_llm_cache
 3. [x] Use FewShotChatMessagePromptTemplate
    - 2s 53ms ➡️ 14ms
-
+---
 # Welcome-To-Langchain 🦜🔗
 
 ### Date: 2025-01-06
