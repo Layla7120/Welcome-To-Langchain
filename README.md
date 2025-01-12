@@ -1,4 +1,20 @@
-# Memory
+# RAG
+
+### Date: 2025-01-12
+
+**Nomad Coders - FullstackGPT #6.0 ~ 6.10**
+
+## ⚒️ Task
+1. [x] Implement a complete RAG pipeline with a Stuff Documents chain.
+2. [x] Give a ConversationBufferMemory to the chain.
+3. [x] Ask the following questions to the chain
+   - Is Aaronson guilty?
+   - What message did he write in the table?
+   - Who is Julia?
+
+---
+
+#Memory
 
 ### Date: 2025-01-08
 
