@@ -40,6 +40,8 @@ llm = ChatOpenAI(
     ]
 )
 
+openai.api_key = ""
+
 with st.sidebar:
     st.title("OpenAI API KEY")
     API_KEY = st.text_input("Use your API KEY")
