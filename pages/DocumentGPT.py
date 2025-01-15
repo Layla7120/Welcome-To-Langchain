@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.chat_models import ChatOpenAI, openai
@@ -13,6 +15,10 @@ st.set_page_config(
     page_title="DocumentGPT",
     page_icon="📃"
 )
+
+if not os.path.exists("./.cache/files"):
+        os.makedirs("./.cache/files")
+        os.makedirs("./.cache/embeddings")
 
 # Streaming
 class ChatCallbackHandler(BaseCallbackHandler):
@@ -58,9 +64,11 @@ if API_KEY:
 else:
     st.warning("Please enter your OpenAI API key in the sidebar to proceed.")
 
+
 @st.cache_data(show_spinner="Embedding file...")
 def embed_file(file):
     file_content = file.read()
+
     file_path = f"./.cache/files/{file.name}"
     with open(file_path, "wb") as f:
         f.write(file_content)
