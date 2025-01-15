@@ -32,25 +32,30 @@ class ChatCallbackHandler(BaseCallbackHandler):
         self.message_box.markdown(self.message)
 
 
-llm = ChatOpenAI(
-    temperature=0.1,
-    streaming=True,
-    callbacks=[
-        ChatCallbackHandler(),
-    ]
-)
-
-openai.api_key = ""
-
 with st.sidebar:
     st.title("OpenAI API KEY")
     API_KEY = st.text_input("Use your API KEY")
 
-    if API_KEY:
-        openai.api_key = API_KEY
     st.title("🔗 Github Repo")
     st.markdown("[![Repo](https://badgen.net/badge/icon/GitHub?icon=github&label)](https://github.com/Layla7120/Welcome-To-Langchain)")
 
+# API_KEY가 있을 경우 등록하고 아니면 error 메세지
+if API_KEY:
+    openai.api_key = API_KEY
+
+    try:
+        llm = ChatOpenAI(
+            temperature=0.1,
+            streaming=True,
+            callbacks=[
+                ChatCallbackHandler(),
+            ]
+        )
+        st.success("ChatOpenAI initialized successfully!")
+    except Exception as e:
+        st.error(f"Failed to initialize ChatOpenAI: {e}")
+else:
+    st.warning("Please enter your OpenAI API key in the sidebar to proceed.")
 
 @st.cache_data(show_spinner="Embedding file...")
 def embed_file(file):
