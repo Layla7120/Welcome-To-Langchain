@@ -49,7 +49,8 @@ if API_KEY:
             streaming=True,
             callbacks=[
                 ChatCallbackHandler(),
-            ]
+            ],
+            openai_api_key=API_KEY
         )
         st.success("ChatOpenAI initialized successfully!")
     except Exception as e:
