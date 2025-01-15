@@ -1,3 +1,17 @@
+# Streamlit is 🔥
+
+### Date: 2025-01-15
+
+**Nomad Coders - FullstackGPT #7.0 ~ 7.10**
+
+## ⚒️ Task
+1. [x] Migrate the RAG pipeline you implemented in the previous assignments to Streamlit.
+2. [x] Implement file upload and chat history.
+3. [x] Allow the user to user its own OpenAI API key - st.input
+4. [x] Using st.sidebar put a link to the Github repo with the code of your Streamlit app.
+
+---
+
 # RAG
 
 ### Date: 2025-01-12
@@ -13,8 +27,7 @@
    - Who is Julia?
 
 ---
-
-#Memory
+# Memory
 
 ### Date: 2025-01-08
 
