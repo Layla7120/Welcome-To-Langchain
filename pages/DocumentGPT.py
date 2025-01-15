@@ -1,6 +1,6 @@
 import streamlit as st
 from langchain.callbacks.base import BaseCallbackHandler
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI, openai
 from langchain.document_loaders import UnstructuredFileLoader
 from langchain.embeddings import OpenAIEmbeddings, CacheBackedEmbeddings
 from langchain.prompts import ChatPromptTemplate
@@ -39,6 +39,16 @@ llm = ChatOpenAI(
         ChatCallbackHandler(),
     ]
 )
+
+with st.sidebar:
+    st.title("OpenAI API KEY")
+    API_KEY = st.text_input("Use your API KEY")
+
+    if API_KEY:
+        openai.api_key = API_KEY
+    st.title("🔗 Github Repo")
+    st.markdown("[![Repo](https://badgen.net/badge/icon/GitHub?icon=github&label)](https://github.com/Layla7120/Welcome-To-Langchain)")
+
 
 @st.cache_data(show_spinner="Embedding file...")
 def embed_file(file):
