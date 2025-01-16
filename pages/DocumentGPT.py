@@ -72,40 +72,41 @@ else:
     st.warning("Please enter your OpenAI API key in the sidebar to proceed.")
 
 
+CACHE_DIR = Path("./.cache/")
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
 @st.cache_data(show_spinner="Embedding file...", persist=True)
 def embed_file(file):
+    file_path = CACHE_DIR / file.name
+    file_content = file.read()
 
-    with tempfile.TemporaryDirectory() as tempdir:
-        temp_file_path = Path(tempdir) / file.name
+    with open(file_path, "wb") as f:
+        f.write(file_content)
 
-        file_content = file.read()
-        with open(temp_file_path, "wb") as f:
-            f.write(file_content)
+    cache_dir = CACHE_DIR / "embeddings" / file.name
+    cache_dir.mkdir(parents=True, exist_ok=True)
 
-        cache_dir = Path(tempdir) / "embeddings" / file.name
-        cache_dir.mkdir(parents=True, exist_ok=True)
+    loader = UnstructuredFileLoader(str(file_path))
 
-        loader = UnstructuredFileLoader(str(temp_file_path))
+    # tokenize
+    splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        separator="\n",
+        chunk_size=600,
+        chunk_overlap=100,
+    )
 
-        # tokenize
-        splitter = CharacterTextSplitter.from_tiktoken_encoder(
-            separator="\n",
-            chunk_size=600,
-            chunk_overlap=100,
-        )
+    docs = loader.load_and_split(text_splitter=splitter)
 
-        docs = loader.load_and_split(text_splitter=splitter)
+    # embedding
+    embeddings = OpenAIEmbeddings()
 
-        # embedding
-        embeddings = OpenAIEmbeddings()
+    cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
 
-        cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+    # vector store
+    vectorstore = FAISS.from_documents(docs, cached_embeddings)
 
-        # vector store
-        vectorstore = FAISS.from_documents(docs, cached_embeddings)
-
-        retriever = vectorstore.as_retriever()
-        return retriever
+    retriever = vectorstore.as_retriever()
+    return retriever
 
 def save_message(message, role):
     st.session_state["messages"].append({"message": message, "role": role})
