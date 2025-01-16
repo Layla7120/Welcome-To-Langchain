@@ -72,21 +72,15 @@ else:
     st.warning("Please enter your OpenAI API key in the sidebar to proceed.")
 
 
-CACHE_DIR = Path("./.cache/")
-CACHE_DIR.mkdir(parents=True, exist_ok=True)
-
 @st.cache_data(show_spinner="Embedding file...", persist=True)
 def embed_file(file):
-    file_path = CACHE_DIR / file.name
     file_content = file.read()
 
+    file_path = f"./.cache/files/{file.name}"
     with open(file_path, "wb") as f:
         f.write(file_content)
-
-    cache_dir = CACHE_DIR / "embeddings" / file.name
-    cache_dir.mkdir(parents=True, exist_ok=True)
-
-    loader = UnstructuredFileLoader(str(file_path))
+    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
+    loader = UnstructuredFileLoader(file_path)
 
     # tokenize
     splitter = CharacterTextSplitter.from_tiktoken_encoder(
