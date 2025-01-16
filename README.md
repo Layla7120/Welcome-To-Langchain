@@ -10,6 +10,10 @@
 3. [x] Allow the user to user its own OpenAI API key - st.input
 4. [x] Using st.sidebar put a link to the Github repo with the code of your Streamlit app.
 
+<img src="./img/DocumentGPT1.png" width="600px" title="DocumentGPT1" alt="DocumentGPT1"/>
+<img src="./img/DocumentGPT2.png" width="600px" title="DocumentGPT2" alt="DocumentGPT2"/>
+<img src="./img/DocumentGPT3.png" width="600px" title="DocumentGPT3" alt="DocumentGPT3"/>
+
 ---
 
 # RAG
