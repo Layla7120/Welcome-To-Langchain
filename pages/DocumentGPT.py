@@ -1,4 +1,6 @@
 import os
+import tempfile
+from pathlib import Path
 
 import streamlit as st
 from langchain.callbacks.base import BaseCallbackHandler
@@ -42,6 +44,11 @@ with st.sidebar:
     st.title("OpenAI API KEY")
     API_KEY = st.text_input("Use your API KEY")
 
+    file = st.file_uploader(
+        "Upload a .txt, .pdf or .docx file",
+        type=["pdf", "txt", "docx"],
+    )
+
     st.title("🔗 Github Repo")
     st.markdown("[![Repo](https://badgen.net/badge/icon/GitHub?icon=github&label)](https://github.com/Layla7120/Welcome-To-Langchain)")
 
@@ -67,33 +74,36 @@ else:
 
 @st.cache_data(show_spinner="Embedding file...")
 def embed_file(file):
-    file_content = file.read()
 
-    file_path = f"./.cache/files/{file.name}"
-    with open(file_path, "wb") as f:
-        f.write(file_content)
-    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
-    loader = UnstructuredFileLoader(file_path)
+    with tempfile.TemporaryDirectory() as tempdir:
+        temp_file_path = Path(tempdir) / file.name
 
-    # tokenize
-    splitter = CharacterTextSplitter.from_tiktoken_encoder(
-        separator="\n",
-        chunk_size=600,
-        chunk_overlap=100,
-    )
+        file_content = file.read()
 
-    docs = loader.load_and_split(text_splitter=splitter)
+        cache_dir = Path(tempdir) / "embeddings" / file.name
+        cache_dir.mkdir(parents=True, exist_ok=True)
 
-    # embedding
-    embeddings = OpenAIEmbeddings()
+        loader = UnstructuredFileLoader(str(temp_file_path))
 
-    cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+        # tokenize
+        splitter = CharacterTextSplitter.from_tiktoken_encoder(
+            separator="\n",
+            chunk_size=600,
+            chunk_overlap=100,
+        )
 
-    # vector store
-    vectorstore = FAISS.from_documents(docs, cached_embeddings)
+        docs = loader.load_and_split(text_splitter=splitter)
 
-    retriever = vectorstore.as_retriever()
-    return retriever
+        # embedding
+        embeddings = OpenAIEmbeddings()
+
+        cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+
+        # vector store
+        vectorstore = FAISS.from_documents(docs, cached_embeddings)
+
+        retriever = vectorstore.as_retriever()
+        return retriever
 
 def save_message(message, role):
     st.session_state["messages"].append({"message": message, "role": role})
@@ -140,13 +150,7 @@ st.markdown(
     """
 )
 
-with st.sidebar:
-    file = st.file_uploader(
-        "Upload a .txt, .pdf or .docx file",
-        type=["pdf", "txt", "docx"],
-    )
-
-if file:
+if file and API_KEY is not None:
     retriever = embed_file(file)
     send_message("Ask me!!", "ai", False)
     paint_history()
