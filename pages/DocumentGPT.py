@@ -1,5 +1,4 @@
 import os
-import tempfile
 from pathlib import Path
 
 import streamlit as st
@@ -18,9 +17,8 @@ st.set_page_config(
     page_icon="📃"
 )
 
-if not os.path.exists("./.cache/files"):
-        os.makedirs("./.cache/files")
-        os.makedirs("./.cache/embeddings")
+Path("./.cache/files").mkdir(parents=True, exist_ok=True)
+Path("./.cache/embeddings").mkdir(parents=True, exist_ok=True)
 
 # Streaming
 class ChatCallbackHandler(BaseCallbackHandler):
@@ -54,9 +52,9 @@ with st.sidebar:
 
 # API_KEY가 있을 경우 등록하고 아니면 error 메세지
 if API_KEY:
-    openai.api_key = API_KEY
-
     try:
+        openai.api_key = API_KEY
+
         llm = ChatOpenAI(
             temperature=0.1,
             streaming=True,
@@ -92,7 +90,7 @@ def embed_file(file):
     docs = loader.load_and_split(text_splitter=splitter)
 
     # embedding
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(openai_api_key=API_KEY)
 
     cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
 
