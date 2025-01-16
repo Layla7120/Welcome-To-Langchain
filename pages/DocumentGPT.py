@@ -72,13 +72,15 @@ else:
     st.warning("Please enter your OpenAI API key in the sidebar to proceed.")
 
 
-@st.cache_data(show_spinner="Embedding file...")
+@st.cache_data(show_spinner="Embedding file...", persist=True)
 def embed_file(file):
 
     with tempfile.TemporaryDirectory() as tempdir:
         temp_file_path = Path(tempdir) / file.name
 
         file_content = file.read()
+        with open(temp_file_path, "wb") as f:
+            f.write(file_content)
 
         cache_dir = Path(tempdir) / "embeddings" / file.name
         cache_dir.mkdir(parents=True, exist_ok=True)
